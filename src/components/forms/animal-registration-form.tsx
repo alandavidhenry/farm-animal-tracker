@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 
-type AnimalType = 'SHEEP' | 'LAMB' | 'GOAT' | 'CATTLE' | 'PIG'
+type AnimalTypeValue = 'SHEEP' | 'LAMB' | 'GOAT' | 'CATTLE' | 'PIG'
 
 interface AnimalFormData {
   tagNumber: string
-  type: AnimalType
+  type: AnimalTypeValue
   initialWeight: string
   birthDate: string
   notes: string
@@ -21,7 +21,10 @@ export default function AnimalRegistrationForm() {
     notes: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,14 +32,31 @@ export default function AnimalRegistrationForm() {
     setMessage(null)
 
     try {
-      // TODO: Replace with actual API call when backend is implemented
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      
+      const response = await fetch('/api/animals', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          tagNumber: formData.tagNumber,
+          type: formData.type,
+          initialWeight: formData.initialWeight,
+          birthDate: formData.birthDate || null,
+          notes: formData.notes || null
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to register animal')
+      }
+
       setMessage({
         type: 'success',
         text: `Animal ${formData.tagNumber} registered successfully!`
       })
-      
+
       // Reset form
       setFormData({
         tagNumber: '',
@@ -48,16 +68,23 @@ export default function AnimalRegistrationForm() {
     } catch (error) {
       setMessage({
         type: 'error',
-        text: 'Failed to register animal. Please try again.'
+        text:
+          error instanceof Error
+            ? error.message
+            : 'Failed to register animal. Please try again.'
       })
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { name, value } = e.target
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }))
@@ -66,11 +93,13 @@ export default function AnimalRegistrationForm() {
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>
       {message && (
-        <div className={`p-4 rounded-md ${
-          message.type === 'success' 
-            ? 'bg-green-50 text-green-800 border border-green-200' 
-            : 'bg-red-50 text-red-800 border border-red-200'
-        }`}>
+        <div
+          className={`p-4 rounded-md ${
+            message.type === 'success'
+              ? 'bg-green-50 text-green-800 border border-green-200'
+              : 'bg-red-50 text-red-800 border border-red-200'
+          }`}
+        >
           {message.text}
         </div>
       )}
@@ -78,7 +107,10 @@ export default function AnimalRegistrationForm() {
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
         {/* Tag Number */}
         <div>
-          <label htmlFor='tagNumber' className='block text-sm font-medium text-gray-700 mb-2'>
+          <label
+            htmlFor='tagNumber'
+            className='block text-sm font-medium text-gray-700 mb-2'
+          >
             Tag Number *
           </label>
           <input
@@ -95,7 +127,10 @@ export default function AnimalRegistrationForm() {
 
         {/* Animal Type */}
         <div>
-          <label htmlFor='type' className='block text-sm font-medium text-gray-700 mb-2'>
+          <label
+            htmlFor='type'
+            className='block text-sm font-medium text-gray-700 mb-2'
+          >
             Animal Type *
           </label>
           <select
@@ -116,7 +151,10 @@ export default function AnimalRegistrationForm() {
 
         {/* Initial Weight */}
         <div>
-          <label htmlFor='initialWeight' className='block text-sm font-medium text-gray-700 mb-2'>
+          <label
+            htmlFor='initialWeight'
+            className='block text-sm font-medium text-gray-700 mb-2'
+          >
             Initial Weight (kg) *
           </label>
           <input
@@ -135,7 +173,10 @@ export default function AnimalRegistrationForm() {
 
         {/* Birth Date */}
         <div>
-          <label htmlFor='birthDate' className='block text-sm font-medium text-gray-700 mb-2'>
+          <label
+            htmlFor='birthDate'
+            className='block text-sm font-medium text-gray-700 mb-2'
+          >
             Birth Date (optional)
           </label>
           <input
@@ -151,7 +192,10 @@ export default function AnimalRegistrationForm() {
 
       {/* Notes */}
       <div>
-        <label htmlFor='notes' className='block text-sm font-medium text-gray-700 mb-2'>
+        <label
+          htmlFor='notes'
+          className='block text-sm font-medium text-gray-700 mb-2'
+        >
           Notes (optional)
         </label>
         <textarea

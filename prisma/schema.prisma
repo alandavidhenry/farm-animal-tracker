@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Animal {
+  id          Int      @id @default(autoincrement())
+  tagNumber   String   @unique
+  type        String   // Using String instead of enum for SQL Server compatibility
+  motherId    Int?     // Self-referential for lineage
+  birthDate   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  mother      Animal?  @relation("AnimalLineage", fields: [motherId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  offspring   Animal[] @relation("AnimalLineage")
+  weights     WeightRecord[]
+  feedRecords FeedRecord[]
+
+  @@map("animals")
+}
+
+model WeightRecord {
+  id          Int      @id @default(autoincrement())
+  animalId    Int
+  weight      Decimal  @db.Decimal(5,2)
+  recordedAt  DateTime @default(now())
+  notes       String?
+  
+  animal      Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@map("weight_records")
+}
+
+model FeedRecord {
+  id          Int      @id @default(autoincrement())
+  animalId    Int
+  feedType    String
+  amount      Decimal  @db.Decimal(5,2)
+  feedDate    DateTime
+  
+  animal      Animal   @relation(fields: [animalId], references: [id], onDelete: Cascade)
+
+  @@map("feed_records")
+}

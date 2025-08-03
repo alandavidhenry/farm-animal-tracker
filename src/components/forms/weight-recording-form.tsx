@@ -15,7 +15,10 @@ export default function WeightRecordingForm() {
     notes: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [message, setMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
 
   const currentDate = new Date().toLocaleDateString('en-GB', {
     day: '2-digit',
@@ -33,14 +36,29 @@ export default function WeightRecordingForm() {
     setMessage(null)
 
     try {
-      // TODO: Replace with actual API call when backend is implemented
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
-      
+      const response = await fetch('/api/weights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          tagNumber: formData.tagNumber,
+          weight: formData.weight,
+          notes: formData.notes || null
+        })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to record weight')
+      }
+
       setMessage({
         type: 'success',
         text: `Weight recorded for animal ${formData.tagNumber}: ${formData.weight}kg`
       })
-      
+
       // Reset form
       setFormData({
         tagNumber: '',
@@ -50,16 +68,21 @@ export default function WeightRecordingForm() {
     } catch (error) {
       setMessage({
         type: 'error',
-        text: 'Failed to record weight. Please try again.'
+        text:
+          error instanceof Error
+            ? error.message
+            : 'Failed to record weight. Please try again.'
       })
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }))
@@ -68,11 +91,13 @@ export default function WeightRecordingForm() {
   return (
     <form onSubmit={handleSubmit} className='space-y-6'>
       {message && (
-        <div className={`p-4 rounded-md ${
-          message.type === 'success' 
-            ? 'bg-green-50 text-green-800 border border-green-200' 
-            : 'bg-red-50 text-red-800 border border-red-200'
-        }`}>
+        <div
+          className={`p-4 rounded-md ${
+            message.type === 'success'
+              ? 'bg-green-50 text-green-800 border border-green-200'
+              : 'bg-red-50 text-red-800 border border-red-200'
+          }`}
+        >
           {message.text}
         </div>
       )}
@@ -94,7 +119,10 @@ export default function WeightRecordingForm() {
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
         {/* Tag Number */}
         <div>
-          <label htmlFor='tagNumber' className='block text-sm font-medium text-gray-700 mb-2'>
+          <label
+            htmlFor='tagNumber'
+            className='block text-sm font-medium text-gray-700 mb-2'
+          >
             Animal Tag Number *
           </label>
           <input
@@ -114,7 +142,10 @@ export default function WeightRecordingForm() {
 
         {/* Weight */}
         <div>
-          <label htmlFor='weight' className='block text-sm font-medium text-gray-700 mb-2'>
+          <label
+            htmlFor='weight'
+            className='block text-sm font-medium text-gray-700 mb-2'
+          >
             Weight (kg) *
           </label>
           <input
@@ -137,7 +168,10 @@ export default function WeightRecordingForm() {
 
       {/* Notes */}
       <div>
-        <label htmlFor='notes' className='block text-sm font-medium text-gray-700 mb-2'>
+        <label
+          htmlFor='notes'
+          className='block text-sm font-medium text-gray-700 mb-2'
+        >
           Notes (optional)
         </label>
         <textarea
