@@ -39,6 +39,9 @@ jobs:
     uses: ./.github/workflows/security-scan.yml
     with:
       run_advanced_scans: ${{ github.ref == 'refs/heads/main' }}
+    permissions:
+      security-events: write
+    secrets: inherit
 
   setup:
     name: Setup Deployment
