@@ -35,9 +35,13 @@ variable "https_only" {
   default     = true
 }
 
-variable "redirect_uris" {
-  description = "Redirect URIs for the application"
-  type        = list(string)
+
+variable "sql_allowed_ip_ranges" {
+  description = "Map of allowed IP ranges for SQL firewall"
+  type = map(object({
+    start_ip = string
+    end_ip   = string
+  }))
 }
 
 variable "key_vault" {
@@ -64,12 +68,6 @@ variable "storage_container" {
   })
 }
 
-variable "azure_ad" {
-  description = "Azure AD application configuration"
-  type = object({
-    password_end_date = string
-  })
-}
 
 variable "github_username" {
   description = "GitHub username for container registry"
@@ -83,8 +81,3 @@ variable "github_token" {
   sensitive   = true
 }
 
-variable "default_admin_email" {
-  description = "Email of the default admin user"
-  type        = string
-  default     = ""
-}

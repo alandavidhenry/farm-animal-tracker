@@ -6,9 +6,13 @@ github_username = "alandavidhenry"
 app_service_sku = "F1"
 https_only      = false
 
-redirect_uris = [
-  "http://localhost:3000/api/auth/callback/azure-ad"
-]
+sql_allowed_ip_ranges = {
+  # Add your development IP ranges here if needed
+  # "office" = {
+  #   start_ip = "xxx.xxx.xxx.xxx"
+  #   end_ip   = "xxx.xxx.xxx.xxx"
+  # }
+}
 
 key_vault = {
   sku_name = "standard"
@@ -21,12 +25,6 @@ storage = {
 }
 
 storage_container = {
-  name                  = "container"
+  name                  = "animal-files"
   container_access_type = "private"
 }
-
-azure_ad = {
-  password_end_date = "2025-12-31T00:00:00Z"
-}
-
-default_admin_email = "alandavidhenry@outlook.com"

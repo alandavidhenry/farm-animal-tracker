@@ -12,6 +12,20 @@ resource "random_password" "nextauth_secret" {
   }
 }
 
+# Generate random password for NextAuth admin
+resource "random_password" "admin_password" {
+  length      = 20
+  special     = true
+  min_special = 1
+  min_upper   = 1
+  min_lower   = 1
+  min_numeric = 1
+  # Only create this on first run
+  keepers = {
+    first_run = "true"
+  }
+}
+
 module "resource_group" {
   source = "../resource_group"
 
@@ -58,16 +72,56 @@ module "storage" {
   }
 }
 
+module "sql_database" {
+  source = "../sql_database"
+
+  project             = var.project
+  environment         = var.environment
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+  administrator_login = "sqladmin"
+  allowed_ip_ranges   = var.sql_allowed_ip_ranges
+  tags                = local.common_tags
+}
+
 resource "azurerm_key_vault_secret" "nextauth_secret" {
   name         = "nextauth-secret"
   value        = random_password.nextauth_secret.result
   key_vault_id = module.key_vault.key_vault_id
+
+  depends_on = [module.key_vault]
 }
 
 resource "azurerm_key_vault_secret" "storage_connection_string" {
   name         = "storage-connection-string"
   value        = module.storage.primary_connection_string
   key_vault_id = module.key_vault.key_vault_id
+
+  depends_on = [module.key_vault, module.storage]
+}
+
+resource "azurerm_key_vault_secret" "database_connection_string" {
+  name         = "database-connection-string"
+  value        = module.sql_database.connection_string
+  key_vault_id = module.key_vault.key_vault_id
+
+  depends_on = [module.key_vault, module.sql_database]
+}
+
+resource "azurerm_key_vault_secret" "admin_email" {
+  name         = "admin-email"
+  value        = "alandavidhenry@gmail.com"
+  key_vault_id = module.key_vault.key_vault_id
+
+  depends_on = [module.key_vault]
+}
+
+resource "azurerm_key_vault_secret" "admin_password" {
+  name         = "admin-password"
+  value        = random_password.admin_password.result
+  key_vault_id = module.key_vault.key_vault_id
+
+  depends_on = [module.key_vault]
 }
 
 module "app_service" {
@@ -92,13 +146,24 @@ module "app_service" {
     "WEBSITES_PORT"                       = "8080"
     "AZURE_STORAGE_CONNECTION_STRING"     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.storage_connection_string.versionless_id})"
     "AZURE_STORAGE_CONTAINER_NAME"        = var.storage_container.name
+    "DATABASE_URL"                        = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.database_connection_string.versionless_id})"
     "NEXTAUTH_URL"                        = "https://app-${var.project}-${var.environment}.azurewebsites.net"
     "NEXTAUTH_SECRET"                     = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.nextauth_secret.versionless_id})"
+    "ADMIN_EMAIL"                         = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.admin_email.versionless_id})"
+    "ADMIN_PASSWORD"                      = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.admin_password.versionless_id})"
     "WEBSITE_NODE_DEFAULT_VERSION"        = "~22"
     "SCM_DO_BUILD_DURING_DEPLOYMENT"      = "true"
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = "true"
     "WEBSITES_CONTAINER_START_TIME_LIMIT" = "600"
   }
+
+  depends_on = [
+    azurerm_key_vault_secret.nextauth_secret,
+    azurerm_key_vault_secret.storage_connection_string,
+    azurerm_key_vault_secret.database_connection_string,
+    azurerm_key_vault_secret.admin_email,
+    azurerm_key_vault_secret.admin_password
+  ]
 }
 
 resource "azurerm_key_vault_access_policy" "app_service" {
@@ -109,6 +174,8 @@ resource "azurerm_key_vault_access_policy" "app_service" {
   secret_permissions = [
     "Get", "List"
   ]
+
+  depends_on = [module.app_service, module.key_vault]
 }
 
 # Data source for current client config

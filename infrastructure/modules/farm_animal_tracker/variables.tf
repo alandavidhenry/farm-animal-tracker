@@ -31,10 +31,14 @@ variable "https_only" {
   default     = true
 }
 
-variable "redirect_uris" {
-  description = "Redirect URIs for the application"
-  type        = list(string)
-  default     = []
+
+variable "sql_allowed_ip_ranges" {
+  description = "Map of allowed IP ranges for SQL firewall"
+  type = map(object({
+    start_ip = string
+    end_ip   = string
+  }))
+  default = {}
 }
 
 variable "key_vault" {
@@ -79,8 +83,3 @@ variable "allowed_origins" {
   default     = []
 }
 
-variable "default_admin_email" {
-  description = "Email of the default admin user"
-  type        = string
-  default     = ""
-}
