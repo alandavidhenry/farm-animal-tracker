@@ -14,8 +14,6 @@ on:
     secrets:
       AZURE_CREDENTIALS:
         required: true
-      AZURE_APP_NAME:
-        required: true
 
 jobs:
   deploy:
@@ -32,5 +30,5 @@ jobs:
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
-          app-name: ${{ secrets.AZURE_APP_NAME }}
+          app-name: ${{ vars.AZURE_APP_NAME }}
           images: ${{ inputs.image_uri }}

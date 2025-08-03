@@ -8,7 +8,7 @@ on:
       - 'public/**'
       - 'package.json'
       - 'package-lock.json'
-      - 'next.config.mjs'
+      - 'next.config.ts'
       - 'tailwind.config.ts'
       - 'postcss.config.mjs'
       - 'Dockerfile'
@@ -93,7 +93,6 @@ jobs:
       image_uri: ${{ needs.build.outputs.image_uri }}
     secrets:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      AZURE_APP_NAME: ${{ secrets.AZURE_APP_NAME }}
 
   release:
     name: Create Release
