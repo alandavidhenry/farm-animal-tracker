@@ -10,14 +10,13 @@ resource "azurecaf_name" "sql_database" {
   suffixes      = [var.environment]
 }
 
-# Generate random password for SQL Server admin
+# Generate random password for SQL Server admin (no special characters to avoid connection string issues)
 resource "random_password" "sql_admin_password" {
-  length      = 16
-  special     = true
-  min_special = 1
-  min_upper   = 1
-  min_lower   = 1
-  min_numeric = 1
+  length      = 20
+  special     = false
+  min_upper   = 3
+  min_lower   = 3
+  min_numeric = 3
   # Only create this on first run
   keepers = {
     first_run = "true"
@@ -37,14 +36,14 @@ resource "azurerm_mssql_server" "main" {
 }
 
 resource "azurerm_mssql_database" "main" {
-  name                        = azurecaf_name.sql_database.result
-  server_id                   = azurerm_mssql_server.main.id
-  collation                   = "SQL_Latin1_General_CP1_CI_AS"
-  license_type                = "LicenseIncluded"
-  max_size_gb                 = 2
-  sku_name                    = "Basic"
-  zone_redundant              = false
-  storage_account_type        = "Local"
+  name                 = azurecaf_name.sql_database.result
+  server_id            = azurerm_mssql_server.main.id
+  collation            = "SQL_Latin1_General_CP1_CI_AS"
+  license_type         = "LicenseIncluded"
+  max_size_gb          = 2
+  sku_name             = "Basic"
+  zone_redundant       = false
+  storage_account_type = "Local"
 
   tags = var.tags
 }
@@ -65,4 +64,21 @@ resource "azurerm_mssql_firewall_rule" "allowed_ips" {
   server_id        = azurerm_mssql_server.main.id
   start_ip_address = each.value.start_ip
   end_ip_address   = each.value.end_ip
+}
+
+# Execute database schema initialization script
+resource "null_resource" "database_schema" {
+  depends_on = [
+    azurerm_mssql_database.main,
+    azurerm_mssql_firewall_rule.azure_services
+  ]
+
+  triggers = {
+    database_id = azurerm_mssql_database.main.id
+    script_hash = filemd5("${path.module}/../../sql/init_schema.sql")
+  }
+
+  provisioner "local-exec" {
+    command = "sqlcmd -S ${azurerm_mssql_server.main.fully_qualified_domain_name} -d ${azurerm_mssql_database.main.name} -U ${var.administrator_login} -P ${random_password.sql_admin_password.result} -i ${path.module}/../../sql/init_schema.sql"
+  }
 }
