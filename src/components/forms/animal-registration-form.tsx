@@ -96,8 +96,8 @@ export default function AnimalRegistrationForm() {
         <div
           className={`p-4 rounded-md ${
             message.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
-              : 'bg-red-50 text-red-800 border border-red-200'
+              ? 'bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-700'
+              : 'bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-300 border border-red-200 dark:border-red-700'
           }`}
         >
           {message.text}
@@ -109,7 +109,7 @@ export default function AnimalRegistrationForm() {
         <div>
           <label
             htmlFor='tagNumber'
-            className='block text-sm font-medium text-gray-700 mb-2'
+            className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
           >
             Tag Number *
           </label>
@@ -120,7 +120,7 @@ export default function AnimalRegistrationForm() {
             value={formData.tagNumber}
             onChange={handleChange}
             required
-            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
             placeholder='e.g., A001, B123'
           />
         </div>
@@ -129,7 +129,7 @@ export default function AnimalRegistrationForm() {
         <div>
           <label
             htmlFor='type'
-            className='block text-sm font-medium text-gray-700 mb-2'
+            className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
           >
             Animal Type *
           </label>
@@ -139,7 +139,7 @@ export default function AnimalRegistrationForm() {
             value={formData.type}
             onChange={handleChange}
             required
-            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
           >
             <option value='SHEEP'>Sheep</option>
             <option value='LAMB'>Lamb</option>
@@ -153,7 +153,7 @@ export default function AnimalRegistrationForm() {
         <div>
           <label
             htmlFor='initialWeight'
-            className='block text-sm font-medium text-gray-700 mb-2'
+            className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
           >
             Initial Weight (kg) *
           </label>
@@ -166,7 +166,7 @@ export default function AnimalRegistrationForm() {
             required
             min='0'
             step='0.1'
-            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
             placeholder='e.g., 45.5'
           />
         </div>
@@ -175,7 +175,7 @@ export default function AnimalRegistrationForm() {
         <div>
           <label
             htmlFor='birthDate'
-            className='block text-sm font-medium text-gray-700 mb-2'
+            className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
           >
             Birth Date (optional)
           </label>
@@ -185,7 +185,7 @@ export default function AnimalRegistrationForm() {
             name='birthDate'
             value={formData.birthDate}
             onChange={handleChange}
-            className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
           />
         </div>
       </div>
@@ -194,7 +194,7 @@ export default function AnimalRegistrationForm() {
       <div>
         <label
           htmlFor='notes'
-          className='block text-sm font-medium text-gray-700 mb-2'
+          className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'
         >
           Notes (optional)
         </label>
@@ -204,7 +204,7 @@ export default function AnimalRegistrationForm() {
           value={formData.notes}
           onChange={handleChange}
           rows={3}
-          className='w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+          className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
           placeholder='Any additional notes about the animal...'
         />
       </div>
@@ -214,7 +214,7 @@ export default function AnimalRegistrationForm() {
         <button
           type='submit'
           disabled={isSubmitting}
-          className='bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-medium py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+          className='bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 disabled:bg-blue-300 dark:disabled:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-800'
         >
           {isSubmitting ? 'Registering...' : 'Register Animal'}
         </button>
