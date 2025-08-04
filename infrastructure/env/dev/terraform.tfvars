@@ -7,11 +7,10 @@ app_service_sku = "F1"
 https_only      = false
 
 sql_allowed_ip_ranges = {
-  # Add your development IP ranges here if needed
-  # "office" = {
-  #   start_ip = "xxx.xxx.xxx.xxx"
-  #   end_ip   = "xxx.xxx.xxx.xxx"
-  # }
+  "alan_pc" = {
+    start_ip = "193.237.217.75"
+    end_ip   = "193.237.217.75"
+  }
 }
 
 key_vault = {
