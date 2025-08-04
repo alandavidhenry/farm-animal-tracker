@@ -213,14 +213,52 @@ docker run -p 3000:8080 farm-tracker
 - **CORS**: Properly configured for Azure hosting
 - **Environment**: Separate dev/prod configurations
 
+## Database Deployment Strategy
+
+### Automated Database Setup (Recommended)
+Database tables are automatically created using multiple layers:
+
+1. **Terraform SQL Scripts**: Primary deployment method
+   - Location: `infrastructure/sql/init_schema.sql`
+   - Executed automatically during `terraform apply`
+   - Includes idempotent table creation with IF NOT EXISTS checks
+   - Creates tables, indexes, triggers, and relationships
+
+2. **Post-Deployment Scripts**: Backup method for CI/CD
+   - Bash: `scripts/deploy-database.sh`
+   - PowerShell: `scripts/deploy-database.ps1`
+   - Runs Prisma migrations and tests connectivity
+   - Use in GitHub Actions after infrastructure deployment
+
+3. **Manual Backup**: Emergency fallback
+   - Location: `scripts/manual-db-setup.sql`
+   - Complete SQL script for manual execution
+   - Use if Terraform/Prisma deployment fails
+
+### Database Deployment Commands
+
+```bash
+# For local development (with proper DATABASE_URL in .env.local)
+npm run db:migrate
+
+# For production deployment via scripts
+./scripts/deploy-database.sh
+# or
+./scripts/deploy-database.ps1
+
+# For manual emergency setup
+sqlcmd -S your-server.database.windows.net -d your-database -U sqladmin -P password -i scripts/manual-db-setup.sql
+```
+
 ## Deployment Pipeline
 
 Use existing GitHub Actions with modifications:
 1. **Lint & Test**: ESLint, Prettier, TypeScript checks
 2. **Security Scan**: Dependency scanning, CodeQL
 3. **Build**: Docker image creation
-4. **Deploy**: Azure App Service deployment
-5. **Infrastructure**: Terraform apply for infrastructure changes
+4. **Infrastructure**: Terraform apply (creates database tables automatically)
+5. **Database Migration**: Run post-deployment script to ensure Prisma sync
+6. **Deploy**: Azure App Service deployment
 
 ## Success Criteria
 
