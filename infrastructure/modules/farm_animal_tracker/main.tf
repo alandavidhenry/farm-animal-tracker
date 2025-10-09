@@ -81,6 +81,8 @@ module "sql_database" {
   resource_group_name = module.resource_group.resource_group_name
   administrator_login = "sqladmin"
   allowed_ip_ranges   = var.sql_allowed_ip_ranges
+  sku_name            = var.sql_database.sku_name
+  max_size_gb         = var.sql_database.max_size_gb
   tags                = local.common_tags
 }
 

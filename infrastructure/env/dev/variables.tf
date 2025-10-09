@@ -44,6 +44,14 @@ variable "sql_allowed_ip_ranges" {
   }))
 }
 
+variable "sql_database" {
+  description = "SQL Database configuration"
+  type = object({
+    sku_name    = string
+    max_size_gb = number
+  })
+}
+
 variable "key_vault" {
   description = "Key Vault configuration"
   type = object({

@@ -11,6 +11,7 @@ module "farm_animal_tracker" {
   app_service_sku       = var.app_service_sku
   https_only            = var.https_only
   sql_allowed_ip_ranges = var.sql_allowed_ip_ranges
+  sql_database          = var.sql_database
   key_vault             = var.key_vault
   storage               = var.storage
   storage_container     = var.storage_container

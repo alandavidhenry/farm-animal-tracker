@@ -33,6 +33,18 @@ variable "allowed_ip_ranges" {
   default = {}
 }
 
+variable "sku_name" {
+  description = "SQL Database SKU name"
+  type        = string
+  default     = "GP_S_Gen5_2"
+}
+
+variable "max_size_gb" {
+  description = "Maximum size of the database in gigabytes"
+  type        = number
+  default     = 32
+}
+
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)

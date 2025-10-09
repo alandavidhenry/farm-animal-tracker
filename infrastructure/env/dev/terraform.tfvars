@@ -13,6 +13,11 @@ sql_allowed_ip_ranges = {
   }
 }
 
+sql_database = {
+  sku_name    = "GP_S_Gen5_2"
+  max_size_gb = 32
+}
+
 key_vault = {
   sku_name = "standard"
 }
