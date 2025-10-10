@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface WeightFormData {
   tagNumber: string
@@ -19,13 +19,23 @@ export default function WeightRecordingForm() {
     type: 'success' | 'error'
     text: string
   } | null>(null)
+  const [currentDateTime, setCurrentDateTime] = useState(new Date())
 
-  const currentDate = new Date().toLocaleDateString('en-GB', {
+  // Update current date/time every minute
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date())
+    }, 10000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  const currentDate = currentDateTime.toLocaleDateString('en-GB', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
   })
-  const currentTime = new Date().toLocaleTimeString('en-GB', {
+  const currentTime = currentDateTime.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit'
   })
