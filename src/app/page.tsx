@@ -1,8 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
-import Link from 'next/link'
 
 import AnimalRegistrationForm from '@/components/forms/animal-registration-form'
 import WeightRecordingForm from '@/components/forms/weight-recording-form'

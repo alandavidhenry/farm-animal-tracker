@@ -1,8 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 
 import ThemeToggle from '@/components/ui/theme-toggle'
 
@@ -48,9 +48,7 @@ export default function AnimalsPage() {
       const data = await response.json()
       setAnimals(data.animals)
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to load animals'
-      )
+      setError(err instanceof Error ? err.message : 'Failed to load animals')
     } finally {
       setIsLoading(false)
     }

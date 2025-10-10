@@ -2,7 +2,12 @@
  * Example test demonstrating how to use Prisma mocks
  */
 
-import { prismaMock, resetPrismaMock, mockAnimal, mockWeightRecord } from '../prisma-mock'
+import {
+  prismaMock,
+  resetPrismaMock,
+  mockAnimal,
+  mockWeightRecord
+} from '../prisma-mock'
 
 describe('Prisma Mock Examples', () => {
   beforeEach(() => {

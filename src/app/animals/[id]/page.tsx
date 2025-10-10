@@ -1,9 +1,9 @@
 'use client'
 
+import Link from 'next/link'
+import { useParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
 
 import ThemeToggle from '@/components/ui/theme-toggle'
 
@@ -26,59 +26,58 @@ interface Animal {
 export default function AnimalDetailPage() {
   const { data: session } = useSession()
   const params = useParams()
-  const router = useRouter()
   const [animal, setAnimal] = useState<Animal | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    const fetchAnimalDetails = async () => {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        // Fetch animal data
+        const animalsResponse = await fetch('/api/animals')
+        if (!animalsResponse.ok) {
+          throw new Error('Failed to fetch animal data')
+        }
+
+        const animalsData = await animalsResponse.json()
+        const foundAnimal = animalsData.animals.find(
+          (a: Animal) => a.id === parseInt(params.id as string)
+        )
+
+        if (!foundAnimal) {
+          throw new Error('Animal not found')
+        }
+
+        // Fetch weight history for this animal
+        const weightsResponse = await fetch(
+          `/api/weights?animalId=${params.id}`
+        )
+        if (!weightsResponse.ok) {
+          throw new Error('Failed to fetch weight history')
+        }
+
+        const weightsData = await weightsResponse.json()
+
+        setAnimal({
+          ...foundAnimal,
+          weights: weightsData.weights
+        })
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to load animal details'
+        )
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
     if (session && params.id) {
       fetchAnimalDetails()
     }
   }, [session, params.id])
-
-  const fetchAnimalDetails = async () => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      // Fetch animal data
-      const animalsResponse = await fetch('/api/animals')
-      if (!animalsResponse.ok) {
-        throw new Error('Failed to fetch animal data')
-      }
-
-      const animalsData = await animalsResponse.json()
-      const foundAnimal = animalsData.animals.find(
-        (a: Animal) => a.id === parseInt(params.id as string)
-      )
-
-      if (!foundAnimal) {
-        throw new Error('Animal not found')
-      }
-
-      // Fetch weight history for this animal
-      const weightsResponse = await fetch(
-        `/api/weights?animalId=${params.id}`
-      )
-      if (!weightsResponse.ok) {
-        throw new Error('Failed to fetch weight history')
-      }
-
-      const weightsData = await weightsResponse.json()
-
-      setAnimal({
-        ...foundAnimal,
-        weights: weightsData.weights
-      })
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to load animal details'
-      )
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   if (!session) {
     return (
@@ -276,13 +275,15 @@ export default function AnimalDetailPage() {
                             <td className='px-6 py-4 whitespace-nowrap text-sm'>
                               {change !== null ? (
                                 <span
-                                  className={
-                                    change > 0
-                                      ? 'text-green-600 dark:text-green-400'
-                                      : change < 0
-                                        ? 'text-red-600 dark:text-red-400'
-                                        : 'text-gray-500 dark:text-gray-400'
-                                  }
+                                  className={(() => {
+                                    if (change > 0) {
+                                      return 'text-green-600 dark:text-green-400'
+                                    }
+                                    if (change < 0) {
+                                      return 'text-red-600 dark:text-red-400'
+                                    }
+                                    return 'text-gray-500 dark:text-gray-400'
+                                  })()}
                                 >
                                   {change > 0 ? '+' : ''}
                                   {change.toFixed(1)} kg
