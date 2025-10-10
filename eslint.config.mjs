@@ -1,5 +1,5 @@
+import { FlatCompat } from '@eslint/eslintrc'
 import js from '@eslint/js'
-import nextPlugin from '@next/eslint-plugin-next'
 import { defineConfig } from 'eslint/config'
 import importPlugin from 'eslint-plugin-import'
 import pluginJsxA11y from 'eslint-plugin-jsx-a11y'
@@ -7,6 +7,10 @@ import pluginReact from 'eslint-plugin-react'
 import pluginReactHooks from 'eslint-plugin-react-hooks'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
+
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname
+})
 
 export default defineConfig([
   // Ignore patterns
@@ -22,6 +26,11 @@ export default defineConfig([
       '**/*.test.tsx'
     ]
   },
+
+  // Next.js configuration
+  ...compat.config({
+    extends: ['next/core-web-vitals', 'next/typescript']
+  }),
 
   // Base JS settings
   {
@@ -63,19 +72,6 @@ export default defineConfig([
       react: {
         version: 'detect'
       }
-    }
-  },
-
-  // Next.js
-  {
-    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
-    plugins: {
-      next: nextPlugin
-    },
-    rules: {
-      'next/no-html-link-for-pages': 'error',
-      'next/no-img-element': 'warn',
-      'next/no-unwanted-polyfillio': 'warn'
     }
   },
 
