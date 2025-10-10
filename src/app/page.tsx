@@ -2,6 +2,7 @@
 
 import { useSession, signOut } from 'next-auth/react'
 import { useState } from 'react'
+import Link from 'next/link'
 
 import AnimalRegistrationForm from '@/components/forms/animal-registration-form'
 import WeightRecordingForm from '@/components/forms/weight-recording-form'
@@ -33,8 +34,14 @@ export default function Home() {
               </h1>
             </div>
             <div className='flex items-center space-x-4'>
+              <Link
+                href='/animals'
+                className='text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline'
+              >
+                View All Animals
+              </Link>
               <ThemeToggle />
-              <span className='text-sm text-gray-500 dark:text-gray-400'>
+              <span className='text-sm text-gray-500 dark:text-gray-400 hidden sm:inline'>
                 Welcome, {session.user?.email}
               </span>
               <button
@@ -49,14 +56,14 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className='max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8'>
+      <main className='max-w-4xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8'>
         {/* Tab Navigation */}
-        <div className='mb-6'>
+        <div className='mb-4 sm:mb-6'>
           <div className='border-b border-gray-200 dark:border-gray-700'>
-            <nav className='-mb-px flex space-x-8'>
+            <nav className='-mb-px flex space-x-4 sm:space-x-8'>
               <button
                 onClick={() => setActiveTab('register')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-2 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors ${
                   activeTab === 'register'
                     ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                     : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
@@ -66,7 +73,7 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveTab('weight')}
-                className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-2 px-1 border-b-2 font-medium text-xs sm:text-sm transition-colors ${
                   activeTab === 'weight'
                     ? 'border-blue-500 text-blue-600 dark:text-blue-400'
                     : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
@@ -79,10 +86,10 @@ export default function Home() {
         </div>
 
         {/* Tab Content */}
-        <div className='bg-white dark:bg-gray-800 shadow rounded-lg p-6 transition-colors'>
+        <div className='bg-white dark:bg-gray-800 shadow rounded-lg p-4 sm:p-6 transition-colors'>
           {activeTab === 'register' && (
             <div>
-              <h2 className='text-lg font-medium text-gray-900 dark:text-white mb-4'>
+              <h2 className='text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-4'>
                 Register New Animal
               </h2>
               <AnimalRegistrationForm />
@@ -91,7 +98,7 @@ export default function Home() {
 
           {activeTab === 'weight' && (
             <div>
-              <h2 className='text-lg font-medium text-gray-900 dark:text-white mb-4'>
+              <h2 className='text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-4'>
                 Record Animal Weight
               </h2>
               <WeightRecordingForm />

@@ -18,7 +18,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Farm Animal Tracker',
-  description: 'Track farm animal weights and data'
+  description: 'Track farm animal weights and data',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=5'
 }
 
 export default function RootLayout({

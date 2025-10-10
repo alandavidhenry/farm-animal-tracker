@@ -38,12 +38,10 @@ A Next.js web application for tracking farm animal weights and data, designed fo
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
-- Azure subscription
-- SQL Server tools (sqlcmd) for database operations
 
-### Local Development
+### Local Development with SQLite (Easiest)
 
 1. **Clone the repository**
    ```bash
@@ -57,39 +55,30 @@ A Next.js web application for tracking farm animal weights and data, designed fo
    ```
 
 3. **Set up environment variables**
-   Create `.env.local` file:
-   ```env
-   # Database
-   DATABASE_URL="sqlserver://your-server.database.windows.net:1433;database=your-db;user=your-user;password=your-password;encrypt=true;trustServerCertificate=false;connectionTimeout=30;"
-   
-   # NextAuth
-   NEXTAUTH_SECRET="your-random-secret-32-chars-plus"
-   NEXTAUTH_URL="http://localhost:3000"
-   
-   # Admin Credentials
-   ADMIN_EMAIL="your-admin@email.com"
-   ADMIN_PASSWORD="your-secure-password"
-   
-   # Azure Storage
-   AZURE_STORAGE_CONNECTION_STRING="your-storage-connection-string"
-   AZURE_STORAGE_CONTAINER_NAME="animal-files"
+   ```bash
+   cp .env.local.example .env.local
+   ```
+   The default settings work out of the box with SQLite!
+
+4. **Start development server with auto-setup**
+   ```bash
+   npm run dev:local
    ```
 
-4. **Set up database**
-   ```bash
-   # Generate Prisma client
-   npx prisma generate
-   
-   # Run migrations
-   npx prisma migrate dev --name init
-   ```
+5. **Login with default credentials**
+   - Email: `admin@example.com`
+   - Password: `admin123`
 
-5. **Start development server**
+6. **(Optional) Seed sample data**
    ```bash
-   npm run dev
+   npm run db:seed:local
    ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+### Alternative: Connect to Azure SQL Database
+
+For production-like development, see the [Local Development Guide](docs/local-development.md) for instructions on connecting to Azure SQL Database.
 
 ## 📊 Database Schema
 
@@ -166,21 +155,29 @@ This creates:
 
 ```bash
 # Development
-npm run dev              # Start development server
-npm run build           # Build for production
-npm run start           # Start production server
+npm run dev              # Start development server (requires DB)
+npm run dev:local        # Start with SQLite (auto-setup)
+npm run build            # Build for production
+npm run start            # Start production server
+
+# Database Management
+npm run db:setup:local   # Setup SQLite database
+npm run db:seed:local    # Seed SQLite with sample data
+npm run db:studio:local  # Open Prisma Studio (SQLite)
+npm run db:studio        # Open Prisma Studio (SQL Server)
+
+# Testing
+npm test                 # Run tests
+npm run test:watch       # Run tests in watch mode
+npm run test:coverage    # Run tests with coverage
 
 # Code Quality
-npm run lint            # Run ESLint
-npm run format          # Format with Prettier
-npm run typecheck       # TypeScript validation
-npm run checks          # Run all quality checks
-
-# Database
-npx prisma studio       # Open database browser
-npx prisma migrate dev  # Create and apply migration
-npx prisma generate     # Generate Prisma client
+npm run lint             # Run ESLint
+npm run format           # Format with Prettier
+npm run checks           # Run all quality checks
 ```
+
+For detailed documentation on local development, database mocking, and testing, see the [Local Development Guide](docs/local-development.md).
 
 ## 🌐 Deployment Pipeline
 
@@ -230,11 +227,17 @@ Estimated monthly cost: **$0-5** for development, **$15-30** for production scal
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## 📚 Documentation
+
+- **[Local Development Guide](docs/local-development.md)** - SQLite setup, Azure SQL connection, database mocking for tests
+- **[CLAUDE.md](CLAUDE.md)** - Detailed technical requirements and architecture
+- **[TESTING.md](TESTING.md)** - Testing strategy and guidelines
+
 ## 🆘 Support
 
 For technical issues:
-- Check the [CLAUDE.md](CLAUDE.md) file for detailed technical documentation
-- Review the troubleshooting section in the documentation
+- Check the [Local Development Guide](docs/local-development.md) for setup and troubleshooting
+- Review the [CLAUDE.md](CLAUDE.md) file for detailed technical documentation
 - Create an issue in the GitHub repository
 
 ## 🙏 Acknowledgments
