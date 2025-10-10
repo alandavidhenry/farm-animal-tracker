@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 
 interface WeightFormData {
@@ -8,9 +9,20 @@ interface WeightFormData {
   notes: string
 }
 
-export default function WeightRecordingForm() {
+interface WeightRecordingFormProps {
+  prefilledTagNumber?: string
+  readonly?: boolean
+  returnUrl?: string
+}
+
+export default function WeightRecordingForm({
+  prefilledTagNumber,
+  readonly = false,
+  returnUrl
+}: WeightRecordingFormProps) {
+  const router = useRouter()
   const [formData, setFormData] = useState<WeightFormData>({
-    tagNumber: '',
+    tagNumber: prefilledTagNumber || '',
     weight: '',
     notes: ''
   })
@@ -69,12 +81,19 @@ export default function WeightRecordingForm() {
         text: `Weight recorded for animal ${formData.tagNumber}: ${formData.weight}kg`
       })
 
-      // Reset form
-      setFormData({
-        tagNumber: '',
-        weight: '',
-        notes: ''
-      })
+      // If returnUrl is provided, redirect after a short delay
+      if (returnUrl) {
+        setTimeout(() => {
+          router.push(returnUrl)
+        }, 1500)
+      } else {
+        // Reset form if staying on page
+        setFormData({
+          tagNumber: prefilledTagNumber || '',
+          weight: '',
+          notes: ''
+        })
+      }
     } catch (error) {
       setMessage({
         type: 'error',
@@ -146,11 +165,19 @@ export default function WeightRecordingForm() {
             value={formData.tagNumber}
             onChange={handleChange}
             required
-            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+            readOnly={readonly}
+            disabled={readonly}
+            className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 ${
+              readonly
+                ? 'bg-gray-100 dark:bg-gray-600 cursor-not-allowed'
+                : 'bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400'
+            }`}
             placeholder='e.g., A001, B123'
           />
           <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
-            Enter the tag number of the animal to record weight for
+            {readonly
+              ? 'Tag number pre-filled from animal details'
+              : 'Enter the tag number of the animal to record weight for'}
           </p>
         </div>
 

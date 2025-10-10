@@ -1,5 +1,6 @@
 'use client'
 
+import { useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
 import WeightRecordingForm from '@/components/forms/weight-recording-form'
@@ -7,6 +8,9 @@ import AppHeader from '@/components/ui/app-header'
 
 export default function RecordWeightPage() {
   const { data: session } = useSession()
+  const searchParams = useSearchParams()
+  const tagNumber = searchParams.get('tagNumber')
+  const returnUrl = searchParams.get('returnUrl')
 
   if (!session) {
     return (
@@ -27,13 +31,23 @@ export default function RecordWeightPage() {
           <div className='mb-6'>
             <h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-2'>
               Record Animal Weight
+              {tagNumber && (
+                <span className='text-blue-600 dark:text-blue-400'>
+                  {' '}
+                  - {tagNumber}
+                </span>
+              )}
             </h2>
             <p className='text-sm text-gray-500 dark:text-gray-400'>
               Record the current weight of an animal. The date and time will be
               automatically captured.
             </p>
           </div>
-          <WeightRecordingForm />
+          <WeightRecordingForm
+            prefilledTagNumber={tagNumber || undefined}
+            readonly={!!tagNumber}
+            returnUrl={returnUrl || undefined}
+          />
         </div>
       </main>
     </div>

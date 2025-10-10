@@ -285,7 +285,7 @@ export default function AnimalDetailPage() {
                 Back to Animals
               </Link>
               <Link
-                href='/weights/record'
+                href={`/weights/record?tagNumber=${encodeURIComponent(animal.tagNumber)}&returnUrl=${encodeURIComponent(`/animals/${animal.id}`)}`}
                 className='bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-6 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900'
               >
                 Record New Weight
