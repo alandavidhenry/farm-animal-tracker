@@ -81,6 +81,8 @@ module "sql_database" {
   resource_group_name = module.resource_group.resource_group_name
   administrator_login = "sqladmin"
   allowed_ip_ranges   = var.sql_allowed_ip_ranges
+  sku_name            = var.sql_database.sku_name
+  max_size_gb         = var.sql_database.max_size_gb
   tags                = local.common_tags
 }
 
@@ -122,6 +124,22 @@ resource "azurerm_key_vault_secret" "admin_password" {
   key_vault_id = module.key_vault.key_vault_id
 
   depends_on = [module.key_vault]
+}
+
+resource "azurerm_key_vault_secret" "sql_admin_login" {
+  name         = "sql-admin-login"
+  value        = module.sql_database.administrator_login
+  key_vault_id = module.key_vault.key_vault_id
+
+  depends_on = [module.key_vault, module.sql_database]
+}
+
+resource "azurerm_key_vault_secret" "sql_admin_password" {
+  name         = "sql-admin-password"
+  value        = module.sql_database.administrator_password
+  key_vault_id = module.key_vault.key_vault_id
+
+  depends_on = [module.key_vault, module.sql_database]
 }
 
 module "app_service" {

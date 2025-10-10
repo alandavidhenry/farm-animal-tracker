@@ -57,3 +57,7 @@ terraform.rc
 crash.log
 crash.*.log
 .terraform.lock.hcl
+
+# Prisma
+/prisma/dev.db
+/prisma/dev.db-journal

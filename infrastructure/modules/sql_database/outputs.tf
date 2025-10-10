@@ -25,7 +25,7 @@ output "administrator_password" {
 }
 
 output "connection_string" {
-  description = "Connection string for the SQL Database"
-  value       = "Server=${azurerm_mssql_server.main.fully_qualified_domain_name};Database=${azurerm_mssql_database.main.name};User Id=${azurerm_mssql_server.main.administrator_login};Password=${random_password.sql_admin_password.result};Encrypt=true;TrustServerCertificate=false;Connection Timeout=30;"
+  description = "Prisma-compatible connection string for the SQL Database"
+  value       = "sqlserver://${azurerm_mssql_server.main.administrator_login}:${random_password.sql_admin_password.result}@${azurerm_mssql_server.main.fully_qualified_domain_name}:1433;database=${azurerm_mssql_database.main.name};encrypt=true"
   sensitive   = true
 }

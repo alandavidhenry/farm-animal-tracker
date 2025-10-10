@@ -30,7 +30,40 @@ output "nextauth_secret" {
   sensitive   = true
 }
 
+output "admin_password" {
+  description = "NextAuth admin password"
+  value       = random_password.admin_password.result
+  sensitive   = true
+}
+
 output "key_vault_name" {
   description = "The name of the Key Vault"
   value       = module.key_vault.key_vault_name
+}
+
+output "sql_server_name" {
+  description = "The name of the SQL Server"
+  value       = module.sql_database.sql_server_name
+}
+
+output "sql_database_name" {
+  description = "The name of the SQL Database"
+  value       = module.sql_database.sql_database_name
+}
+
+output "sql_admin_login" {
+  description = "SQL Server administrator login"
+  value       = module.sql_database.administrator_login
+}
+
+output "sql_admin_password" {
+  description = "SQL Server administrator password"
+  value       = module.sql_database.administrator_password
+  sensitive   = true
+}
+
+output "database_connection_string" {
+  description = "Database connection string"
+  value       = module.sql_database.connection_string
+  sensitive   = true
 }

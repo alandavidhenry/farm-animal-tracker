@@ -41,6 +41,18 @@ variable "sql_allowed_ip_ranges" {
   default = {}
 }
 
+variable "sql_database" {
+  description = "SQL Database configuration"
+  type = object({
+    sku_name    = string
+    max_size_gb = number
+  })
+  default = {
+    sku_name    = "GP_S_Gen5_2"
+    max_size_gb = 32
+  }
+}
+
 variable "key_vault" {
   description = "Key Vault configuration"
   type = object({
