@@ -16,7 +16,10 @@ export default defineConfig([
       'dist/**',
       '.next/**',
       'eslint.config.mjs',
-      '.vscode/**'
+      '.vscode/**',
+      '**/__tests__/**',
+      '**/*.test.ts',
+      '**/*.test.tsx'
     ]
   },
 

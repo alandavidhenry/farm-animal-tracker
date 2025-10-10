@@ -1,1 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run fast checks before commit (lint, format, type-check)
+# Tests run in CI/GitHub Actions for thorough validation
 npm run checks

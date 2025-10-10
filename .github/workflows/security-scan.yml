@@ -16,10 +16,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
           cache: 'npm'
@@ -30,15 +30,6 @@ jobs:
       - name: Run npm audit
         run: npm audit --audit-level=high
         continue-on-error: true
-
-      # Snyk requires a paid account to use API
-      #   - name: Run Snyk to check for vulnerabilities
-      #     uses: snyk/actions/node@master
-      #     continue-on-error: true
-      #     env:
-      #       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      #     with:
-      #       args: --severity-threshold=high
 
       # OWASP Dependency-Check instead of using Snyk
       # - name: Set up JDK 17
@@ -81,10 +72,10 @@ jobs:
 
       - name: Run CodeQL Analysis
         if: inputs.run_advanced_scans
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: javascript
 
       - name: Perform CodeQL Analysis
         if: inputs.run_advanced_scans
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
