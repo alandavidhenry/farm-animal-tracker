@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 
-import ThemeToggle from '@/components/ui/theme-toggle'
+import AppHeader from '@/components/ui/app-header'
 
 interface WeightRecord {
   id: number
@@ -91,37 +91,9 @@ export default function AnimalDetailPage() {
 
   return (
     <div className='min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors'>
-      {/* Header */}
-      <header className='bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex justify-between items-center h-16'>
-            <div className='flex items-center space-x-4'>
-              <Link
-                href='/'
-                className='text-xl font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
-              >
-                Farm Animal Tracker
-              </Link>
-              <span className='text-gray-400 dark:text-gray-600'>|</span>
-              <Link
-                href='/animals'
-                className='text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
-              >
-                Animals
-              </Link>
-              {animal && (
-                <>
-                  <span className='text-gray-400 dark:text-gray-600'>|</span>
-                  <h1 className='text-lg font-medium text-gray-700 dark:text-gray-300'>
-                    {animal.tagNumber}
-                  </h1>
-                </>
-              )}
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+      <AppHeader
+        currentPage={animal ? `Animal: ${animal.tagNumber}` : 'Animal Details'}
+      />
 
       {/* Main Content */}
       <main className='max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8'>
@@ -315,7 +287,7 @@ export default function AnimalDetailPage() {
                 Back to Animals
               </Link>
               <Link
-                href='/'
+                href='/weights/record'
                 className='bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-6 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-blue-400 dark:focus:ring-offset-gray-900'
               >
                 Record New Weight

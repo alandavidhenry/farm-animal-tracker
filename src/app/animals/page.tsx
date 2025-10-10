@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 
-import ThemeToggle from '@/components/ui/theme-toggle'
+import AppHeader from '@/components/ui/app-header'
 
 interface Animal {
   id: number
@@ -76,26 +76,7 @@ export default function AnimalsPage() {
 
   return (
     <div className='min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors'>
-      {/* Header */}
-      <header className='bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700'>
-        <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          <div className='flex justify-between items-center h-16'>
-            <div className='flex items-center space-x-4'>
-              <Link
-                href='/'
-                className='text-xl font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors'
-              >
-                Farm Animal Tracker
-              </Link>
-              <span className='text-gray-400 dark:text-gray-600'>|</span>
-              <h1 className='text-lg font-medium text-gray-700 dark:text-gray-300'>
-                Animals
-              </h1>
-            </div>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+      <AppHeader currentPage='Animals' />
 
       {/* Main Content */}
       <main className='max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8'>
@@ -152,7 +133,7 @@ export default function AnimalsPage() {
                 : 'No animals registered yet.'}
             </div>
             <Link
-              href='/'
+              href='/animals/register'
               className='mt-4 inline-block text-blue-600 dark:text-blue-400 hover:underline'
             >
               Register your first animal
