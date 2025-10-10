@@ -20,7 +20,7 @@ export default function RecordWeightPage() {
 
   return (
     <div className='min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors'>
-      <AppHeader currentPage='Record Weight' />
+      <AppHeader />
 
       <main className='max-w-4xl mx-auto py-6 px-4 sm:px-6 lg:px-8'>
         <div className='bg-white dark:bg-gray-800 shadow rounded-lg p-6 transition-colors'>
