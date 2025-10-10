@@ -311,7 +311,7 @@ See `docs/CI-CD.md` for details.
 ### Tests pass locally but fail in CI
 
 - Run `npm run test:ci` locally to match CI environment
-- Check Node version matches CI (20.x)
+- Check Node version matches CI (22.x)
 - Clear node_modules and reinstall: `rm -rf node_modules && npm ci`
 
 ### Coverage not meeting threshold
