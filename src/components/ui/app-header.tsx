@@ -16,6 +16,11 @@ export default function AppHeader() {
     { name: 'View Animals', href: '/animals' }
   ]
 
+  // Add admin link if user is admin
+  if (session?.user?.role === 'ADMIN') {
+    navItems.push({ name: 'Manage Users', href: '/admin/users' })
+  }
+
   return (
     <header className='bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
