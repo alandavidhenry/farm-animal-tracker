@@ -1,10 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { signIn, getSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import SignIn from '../page'
 
 // Get the mocked functions
 const mockSignIn = signIn as jest.MockedFunction<typeof signIn>
-const mockGetSession = getSession as jest.MockedFunction<typeof getSession>
 
 // Import the mocked router from jest setup
 const mockPush = jest.fn()
@@ -17,6 +16,13 @@ jest.mock('next/navigation', () => ({
   }),
   useSearchParams: () => new URLSearchParams(),
   usePathname: () => '/auth/signin'
+}))
+
+// Mock getSession
+jest.mock('next-auth/react', () => ({
+  ...jest.requireActual('next-auth/react'),
+  signIn: jest.fn(),
+  getSession: jest.fn()
 }))
 
 describe('SignIn Page', () => {
@@ -53,6 +59,9 @@ describe('SignIn Page', () => {
   })
 
   it('handles successful sign in', async () => {
+    const { getSession } = require('next-auth/react')
+    const mockGetSession = getSession as jest.MockedFunction<typeof getSession>
+
     mockSignIn.mockResolvedValue({
       ok: true,
       error: null,
