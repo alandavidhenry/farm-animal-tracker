@@ -82,7 +82,13 @@ export default function AdminUsersPage() {
       }
 
       setShowCreateModal(false)
-      setFormData({ email: '', name: '', password: '', role: 'USER', active: true })
+      setFormData({
+        email: '',
+        name: '',
+        password: '',
+        role: 'USER',
+        active: true
+      })
       fetchUsers()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create user')
@@ -123,7 +129,13 @@ export default function AdminUsersPage() {
       }
 
       setEditingUser(null)
-      setFormData({ email: '', name: '', password: '', role: 'USER', active: true })
+      setFormData({
+        email: '',
+        name: '',
+        password: '',
+        role: 'USER',
+        active: true
+      })
       fetchUsers()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update user')

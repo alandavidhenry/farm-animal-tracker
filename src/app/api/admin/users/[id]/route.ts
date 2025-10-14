@@ -80,10 +80,7 @@ export async function PATCH(
     }
 
     // Prevent admin from deactivating themselves
-    if (
-      userId.toString() === session.user.id &&
-      active === false
-    ) {
+    if (userId.toString() === session.user.id && active === false) {
       return NextResponse.json(
         { error: 'You cannot deactivate your own account' },
         { status: 400 }
@@ -147,7 +144,10 @@ export async function PATCH(
     return NextResponse.json({ user })
   } catch (error) {
     console.error('Error updating user:', error)
-    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to update user' },
+      { status: 500 }
+    )
   }
 }
 
@@ -195,6 +195,9 @@ export async function DELETE(
     return NextResponse.json({ message: 'User deleted successfully' })
   } catch (error) {
     console.error('Error deleting user:', error)
-    return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to delete user' },
+      { status: 500 }
+    )
   }
 }
