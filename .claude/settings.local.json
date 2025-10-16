@@ -6,7 +6,9 @@
       "Bash(npm run build:*)",
       "Bash(npm run test:ci:*)",
       "Bash(npm test:*)",
-      "Bash(awk:*)"
+      "Bash(awk:*)",
+      "Bash(npm run test:*)",
+      "Bash(npm run test:coverage:*)"
     ],
     "deny": [],
     "ask": []

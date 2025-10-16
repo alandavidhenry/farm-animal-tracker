@@ -2,13 +2,28 @@
  * @jest-environment node
  */
 
+import bcrypt from 'bcryptjs'
+
+// Mock Prisma
+jest.mock('@/lib/prisma', () => ({
+  prisma: {
+    user: {
+      findUnique: jest.fn()
+    }
+  }
+}))
+
+// Mock bcrypt
+jest.mock('bcryptjs')
+
 import { authOptions } from '../auth'
+import { prisma } from '../prisma'
 
 describe('NextAuth Configuration', () => {
   const originalEnv = process.env
 
   beforeEach(() => {
-    jest.resetModules()
+    jest.clearAllMocks()
     process.env = { ...originalEnv }
   })
 
@@ -41,156 +56,148 @@ describe('NextAuth Configuration', () => {
   })
 
   describe('Credentials Provider - authorize', () => {
-    it('should authorize valid admin credentials when env vars match', async () => {
-      // Test the authorization logic
+    it('should have authorize function defined', () => {
       const credentialsProvider = authOptions.providers[0]
+
+      expect('authorize' in credentialsProvider).toBe(true)
+      expect(typeof credentialsProvider.authorize).toBe('function')
+    })
+
+    it('should reject user with invalid password', async () => {
+      const credentialsProvider = authOptions.providers[0]
+
       if ('authorize' in credentialsProvider && credentialsProvider.authorize) {
-        // Mock the authorize function's logic
-        const mockAuthorize = async (
-          credentials: { email: string; password: string } | undefined
-        ) => {
-          const adminEmail = 'admin@example.com'
-          const adminPassword = 'securepassword123'
-
-          if (
-            credentials?.email === adminEmail &&
-            credentials?.password === adminPassword
-          ) {
-            return {
-              id: '1',
-              name: 'Admin User',
-              email: adminEmail
-            }
-          }
-          return null
+        const mockUser = {
+          id: 1,
+          email: 'user@test.com',
+          password: 'hashedPassword123',
+          name: 'Test User',
+          role: 'USER',
+          active: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
 
-        const user = await mockAuthorize({
-          email: 'admin@example.com',
-          password: 'securepassword123'
-        })
+        ;(prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser)
+        ;(bcrypt.compare as jest.Mock).mockResolvedValue(false)
 
-        expect(user).toBeTruthy()
-        expect(user?.id).toBe('1')
-        expect(user?.name).toBe('Admin User')
-        expect(user?.email).toBe('admin@example.com')
+        const user = await credentialsProvider.authorize(
+          {
+            email: 'user@test.com',
+            password: 'wrongpassword'
+          },
+          {} as any
+        )
+
+        expect(user).toBeNull()
       }
     })
 
-    it('should reject invalid email', async () => {
-      const mockAuthorize = async (
-        credentials: { email: string; password: string } | undefined
-      ) => {
-        const adminEmail = 'admin@example.com'
-        const adminPassword = 'securepassword123'
+    it('should reject inactive user', async () => {
+      const credentialsProvider = authOptions.providers[0]
 
-        if (
-          credentials?.email === adminEmail &&
-          credentials?.password === adminPassword
-        ) {
-          return {
-            id: '1',
-            name: 'Admin User',
-            email: adminEmail
-          }
+      if ('authorize' in credentialsProvider && credentialsProvider.authorize) {
+        const mockUser = {
+          id: 1,
+          email: 'user@test.com',
+          password: 'hashedPassword123',
+          name: 'Test User',
+          role: 'USER',
+          active: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
-        return null
+
+        ;(prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser)
+
+        const user = await credentialsProvider.authorize(
+          {
+            email: 'user@test.com',
+            password: 'password123'
+          },
+          {} as any
+        )
+
+        expect(user).toBeNull()
       }
-
-      const user = await mockAuthorize({
-        email: 'wrong@example.com',
-        password: 'securepassword123'
-      })
-
-      expect(user).toBeNull()
     })
 
-    it('should reject invalid password', async () => {
-      const mockAuthorize = async (
-        credentials: { email: string; password: string } | undefined
-      ) => {
-        const adminEmail = 'admin@example.com'
-        const adminPassword = 'securepassword123'
+    it('should reject non-existent user', async () => {
+      const credentialsProvider = authOptions.providers[0]
 
-        if (
-          credentials?.email === adminEmail &&
-          credentials?.password === adminPassword
-        ) {
-          return {
-            id: '1',
-            name: 'Admin User',
-            email: adminEmail
-          }
-        }
-        return null
+      if ('authorize' in credentialsProvider && credentialsProvider.authorize) {
+        ;(prisma.user.findUnique as jest.Mock).mockResolvedValue(null)
+
+        const user = await credentialsProvider.authorize(
+          {
+            email: 'nonexistent@test.com',
+            password: 'password123'
+          },
+          {} as any
+        )
+
+        expect(user).toBeNull()
       }
-
-      const user = await mockAuthorize({
-        email: 'admin@example.com',
-        password: 'wrongpassword'
-      })
-
-      expect(user).toBeNull()
     })
 
     it('should reject missing credentials', async () => {
-      const mockAuthorize = async (
-        credentials: { email: string; password: string } | undefined
-      ) => {
-        const adminEmail = 'admin@example.com'
-        const adminPassword = 'securepassword123'
+      const credentialsProvider = authOptions.providers[0]
 
-        if (
-          credentials?.email === adminEmail &&
-          credentials?.password === adminPassword
-        ) {
-          return {
-            id: '1',
-            name: 'Admin User',
-            email: adminEmail
-          }
-        }
-        return null
+      if ('authorize' in credentialsProvider && credentialsProvider.authorize) {
+        const user = await credentialsProvider.authorize(
+          {
+            email: '',
+            password: ''
+          },
+          {} as any
+        )
+
+        expect(user).toBeNull()
       }
-
-      const user = await mockAuthorize(undefined)
-
-      expect(user).toBeNull()
     })
 
-    it('should handle missing environment variables', async () => {
-      const mockAuthorize = async (
-        credentials: { email: string; password: string } | undefined
-      ) => {
-        const adminEmail = undefined
-        const adminPassword = undefined
+    it('should reject missing email', async () => {
+      const credentialsProvider = authOptions.providers[0]
 
-        if (
-          credentials?.email === adminEmail &&
-          credentials?.password === adminPassword
-        ) {
-          return {
-            id: '1',
-            name: 'Admin User',
-            email: adminEmail
-          }
-        }
-        return null
+      if ('authorize' in credentialsProvider && credentialsProvider.authorize) {
+        const user = await credentialsProvider.authorize(
+          {
+            email: '',
+            password: 'password123'
+          },
+          {} as any
+        )
+
+        expect(user).toBeNull()
       }
+    })
 
-      const user = await mockAuthorize({
-        email: 'admin@example.com',
-        password: 'securepassword123'
-      })
+    it('should reject missing password', async () => {
+      const credentialsProvider = authOptions.providers[0]
 
-      expect(user).toBeNull()
+      if ('authorize' in credentialsProvider && credentialsProvider.authorize) {
+        const user = await credentialsProvider.authorize(
+          {
+            email: 'user@test.com',
+            password: ''
+          },
+          {} as any
+        )
+
+        expect(user).toBeNull()
+      }
     })
   })
 
   describe('JWT Callback', () => {
-    it('should add user id to token on sign in', async () => {
+    it('should add user id and role to token on sign in', async () => {
       const mockToken = { sub: '1' }
-      const mockUser = { id: '1', name: 'Test User', email: 'test@example.com' }
+      const mockUser = {
+        id: '1',
+        name: 'Test User',
+        email: 'test@example.com',
+        role: 'USER'
+      }
 
       const result = await authOptions.callbacks?.jwt?.({
         token: mockToken,
@@ -203,10 +210,11 @@ describe('NextAuth Configuration', () => {
 
       expect(result).toBeDefined()
       expect(result?.id).toBe('1')
+      expect(result?.role).toBe('USER')
     })
 
     it('should return token unchanged when no user provided', async () => {
-      const mockToken = { sub: '1', id: '1' }
+      const mockToken = { sub: '1', id: '1', role: 'USER' }
 
       const result = await authOptions.callbacks?.jwt?.({
         token: mockToken,
@@ -219,16 +227,17 @@ describe('NextAuth Configuration', () => {
 
       expect(result).toBeDefined()
       expect(result?.id).toBe('1')
+      expect(result?.role).toBe('USER')
     })
   })
 
   describe('Session Callback', () => {
-    it('should add user id to session from token', async () => {
+    it('should add user id and role to session from token', async () => {
       const mockSession = {
         user: { name: 'Test User', email: 'test@example.com' },
         expires: '2025-01-01'
       }
-      const mockToken = { id: '1', sub: '1' }
+      const mockToken = { id: '1', sub: '1', role: 'USER' }
 
       const result = await authOptions.callbacks?.session?.({
         session: mockSession,
@@ -241,6 +250,7 @@ describe('NextAuth Configuration', () => {
       expect(result).toBeDefined()
       expect(result?.user?.id).toBe('1')
       expect(result?.user?.email).toBe('test@example.com')
+      expect(result?.user?.role).toBe('USER')
     })
 
     it('should handle missing token gracefully', async () => {
@@ -259,6 +269,25 @@ describe('NextAuth Configuration', () => {
 
       expect(result).toBeDefined()
       expect(result?.user).toBeDefined()
+    })
+
+    it('should handle admin role correctly', async () => {
+      const mockSession = {
+        user: { name: 'Admin User', email: 'admin@example.com' },
+        expires: '2025-01-01'
+      }
+      const mockToken = { id: '1', sub: '1', role: 'ADMIN' }
+
+      const result = await authOptions.callbacks?.session?.({
+        session: mockSession,
+        token: mockToken,
+        trigger: 'getSession',
+        newSession: undefined,
+        user: undefined
+      })
+
+      expect(result).toBeDefined()
+      expect(result?.user?.role).toBe('ADMIN')
     })
   })
 })

@@ -6,7 +6,9 @@ import {
   prismaMock,
   resetPrismaMock,
   mockAnimal,
-  mockWeightRecord
+  mockWeightRecord,
+  mockFeedRecord,
+  createMockAnimalWithWeights
 } from '../prisma-mock'
 
 describe('Prisma Mock Examples', () => {
@@ -100,5 +102,84 @@ describe('Prisma Mock Examples', () => {
         where: { id: 1 }
       })
     ).rejects.toThrow('Database connection failed')
+  })
+})
+
+describe('Mock Data Helpers', () => {
+  it('should provide mock animal data', () => {
+    expect(mockAnimal).toBeDefined()
+    expect(mockAnimal.tagNumber).toBe('TEST001')
+    expect(mockAnimal.type).toBe('SHEEP')
+  })
+
+  it('should provide mock weight record data', () => {
+    expect(mockWeightRecord).toBeDefined()
+    expect(mockWeightRecord.weight).toBe(45.5)
+    expect(mockWeightRecord.animalId).toBe(1)
+  })
+
+  it('should provide mock feed record data', () => {
+    expect(mockFeedRecord).toBeDefined()
+    expect(mockFeedRecord.feedType).toBe('Hay')
+    expect(mockFeedRecord.amount).toBe(5.0)
+  })
+
+  it('should create mock animal with default weights', () => {
+    const result = createMockAnimalWithWeights()
+
+    expect(result).toBeDefined()
+    expect(result.tagNumber).toBe('TEST001')
+    expect(result.weights).toHaveLength(1)
+  })
+
+  it('should create mock animal with multiple weights', () => {
+    const result = createMockAnimalWithWeights({}, 3)
+
+    expect(result.weights).toHaveLength(3)
+    expect(result.weights[0].id).toBe(1)
+    expect(result.weights[1].id).toBe(2)
+    expect(result.weights[2].id).toBe(3)
+  })
+
+  it('should create mock animal with overrides', () => {
+    const result = createMockAnimalWithWeights({
+      tagNumber: 'CUSTOM123',
+      type: 'GOAT'
+    })
+
+    expect(result.tagNumber).toBe('CUSTOM123')
+    expect(result.type).toBe('GOAT')
+  })
+
+  it('should create weights with correct animal id from overrides', () => {
+    const result = createMockAnimalWithWeights({ id: 999 }, 2)
+
+    expect(result.id).toBe(999)
+    expect(result.weights[0].animalId).toBe(999)
+    expect(result.weights[1].animalId).toBe(999)
+  })
+
+  it('should create weights with descending dates', () => {
+    const result = createMockAnimalWithWeights({}, 3)
+
+    const date1 = new Date(result.weights[0].recordedAt).getTime()
+    const date2 = new Date(result.weights[1].recordedAt).getTime()
+    const date3 = new Date(result.weights[2].recordedAt).getTime()
+
+    expect(date1).toBeGreaterThan(date2)
+    expect(date2).toBeGreaterThan(date3)
+  })
+})
+
+describe('Reset Functionality', () => {
+  it('should reset mock state between tests', () => {
+    prismaMock.animal.findUnique.mockResolvedValue(mockAnimal)
+
+    expect(prismaMock.animal.findUnique).toBeDefined()
+
+    resetPrismaMock()
+
+    // After reset, the mock should still be defined but cleared
+    expect(prismaMock.animal.findUnique).toBeDefined()
   })
 })
