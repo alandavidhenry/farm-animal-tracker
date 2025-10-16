@@ -122,7 +122,6 @@ describe('AnimalDetailPage', () => {
       })
 
       mockUseParams.mockReturnValue({ id: '999' })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ animals: [] })
@@ -148,7 +147,6 @@ describe('AnimalDetailPage', () => {
       })
 
       mockUseParams.mockReturnValue({ id: '1' })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         json: async () => ({})

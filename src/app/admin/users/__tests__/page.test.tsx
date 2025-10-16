@@ -92,7 +92,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: [] })
