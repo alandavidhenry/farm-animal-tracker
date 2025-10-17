@@ -16,6 +16,28 @@ const customJestConfig = {
     '!src/**/*.stories.{js,jsx,ts,tsx}',
     '!src/**/__tests__/**'
   ],
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 70,
+      lines: 70,
+      statements: 70
+    },
+    // Specific threshold for the admin users page
+    './src/app/admin/users/page.tsx': {
+      branches: 45,
+      functions: 45,
+      lines: 45,
+      statements: 45
+    },
+    // Specific threshold for the auth code
+    './src/lib/auth.ts': {
+      branches: 30,
+      functions: 60,
+      lines: 60,
+      statements: 60
+    }
+  },
   testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
   moduleDirectories: ['node_modules', '<rootDir>/'],
   testPathIgnorePatterns: [
