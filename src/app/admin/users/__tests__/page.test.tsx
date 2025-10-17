@@ -111,7 +111,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -135,7 +134,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: [] })
@@ -157,7 +155,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         json: async () => ({})
@@ -213,7 +210,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -268,7 +264,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -297,7 +292,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -321,7 +315,6 @@ describe('AdminUsersPage', () => {
         expect(screen.queryByText('Create User')).not.toBeInTheDocument()
       })
     })
-
   })
 
   describe('Edit User Modal', () => {
@@ -334,7 +327,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -365,7 +357,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -392,7 +383,6 @@ describe('AdminUsersPage', () => {
   })
 
   describe('Delete User', () => {
-
     it('disables delete button for current user', async () => {
       mockUseSession.mockReturnValue({
         data: {
@@ -402,7 +392,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -427,7 +416,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.confirm as jest.Mock).mockReturnValue(false)
       ;(global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
@@ -445,7 +433,9 @@ describe('AdminUsersPage', () => {
 
       fireEvent.click(deleteButtons[0])
 
-      expect((global.fetch as jest.Mock).mock.calls.length).toBe(initialFetchCount)
+      expect((global.fetch as jest.Mock).mock.calls.length).toBe(
+        initialFetchCount
+      )
     })
   })
 
@@ -459,7 +449,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockRejectedValueOnce('String error')
 
       render(<AdminUsersPage />)
@@ -478,8 +467,9 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
-      ;(global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'))
+      ;(global.fetch as jest.Mock).mockRejectedValueOnce(
+        new Error('Network error')
+      )
 
       render(<AdminUsersPage />)
 
@@ -499,7 +489,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -522,7 +511,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -544,7 +532,6 @@ describe('AdminUsersPage', () => {
         status: 'authenticated',
         update: jest.fn()
       })
-
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ users: mockUsers })
@@ -554,7 +541,9 @@ describe('AdminUsersPage', () => {
 
       await waitFor(() => {
         expect(screen.getByText('User Management')).toBeInTheDocument()
-        expect(screen.getByText('Manage system users and their permissions')).toBeInTheDocument()
+        expect(
+          screen.getByText('Manage system users and their permissions')
+        ).toBeInTheDocument()
       })
     })
   })
